@@ -1,0 +1,33 @@
+{
+  "name": "bookify-db-study",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Comparative database study for Bookify using MongoDB baseline and PostgreSQL optimized schemas.",
+  "workspaces": [
+    "mongo-baseline",
+    "postgres-optimized",
+    "dataset-tools"
+  ],
+  "scripts": {
+    "setup": "npm install && npm run docker:up && npm run postgres:deploy && npm run postgres:generate",
+    "reset": "npm run docker:down && npm run docker:up && npm run postgres:deploy",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "dataset:generate": "npm run dataset:generate --workspace dataset-tools --",
+    "dataset:load:mongo": "npm run dataset:load --workspace mongo-baseline",
+    "dataset:load:postgres": "npm run dataset:load --workspace postgres-optimized",
+    "bench:mongo": "npm run bench --workspace mongo-baseline",
+    "bench:postgres": "npm run bench --workspace postgres-optimized",
+    "bench:compare": "npm run compare --workspace dataset-tools",
+    "backup:mongo": "npm run backup --workspace mongo-baseline",
+    "restore:mongo": "npm run restore --workspace mongo-baseline",
+    "backup:postgres": "npm run backup --workspace postgres-optimized",
+    "restore:postgres": "npm run restore --workspace postgres-optimized",
+    "postgres:generate": "npm run prisma:generate --workspace postgres-optimized",
+    "postgres:deploy": "npm run prisma:deploy --workspace postgres-optimized"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

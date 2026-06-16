@@ -1,0 +1,20 @@
+{
+  "name": "dataset-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dataset:generate": "tsx src/generators/generate-dataset.ts",
+    "compare": "tsx src/metrics/compare-benchmarks.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4"
+  }
+}
+

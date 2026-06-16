@@ -1,0 +1,24 @@
+{
+  "name": "mongo-baseline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dataset:load": "tsx src/scripts/load-dataset.ts",
+    "bench": "tsx src/scripts/run-benchmarks.ts",
+    "backup": "tsx src/scripts/backup.ts",
+    "restore": "tsx src/scripts/restore.ts"
+  },
+  "dependencies": {
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4"
+  }
+}
+

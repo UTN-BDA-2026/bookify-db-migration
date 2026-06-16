@@ -1,0 +1,16 @@
+node_modules
+dist
+.env
+.DS_Store
+coverage
+*.log
+mongo-baseline/backups/*.archive
+mongo-baseline/backups/*.gz
+postgres-optimized/backups/*.dump
+postgres-optimized/backups/*.sql
+dataset-tools/output/datasets/*.json
+dataset-tools/output/datasets/*.csv
+dataset-tools/output/reports/*.json
+dataset-tools/output/reports/*.csv
+dataset-tools/output/reports/*.md
+

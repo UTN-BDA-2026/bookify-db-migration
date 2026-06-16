@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".."
+  },
+  "include": [
+    "src/**/*.ts",
+    "prisma/**/*.ts",
+    "../dataset-tools/src/**/*.ts"
+  ]
+}

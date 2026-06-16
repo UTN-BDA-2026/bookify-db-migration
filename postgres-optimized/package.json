@@ -1,0 +1,27 @@
+{
+  "name": "postgres-optimized",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prisma:generate": "node --env-file=../.env ../node_modules/prisma/build/index.js generate",
+    "prisma:migrate": "node --env-file=../.env ../node_modules/prisma/build/index.js migrate dev",
+    "prisma:deploy": "node --env-file=../.env ../node_modules/prisma/build/index.js migrate deploy",
+    "dataset:load": "tsx src/scripts/load-dataset.ts",
+    "bench": "tsx src/scripts/run-benchmarks.ts",
+    "backup": "tsx src/scripts/backup.ts",
+    "restore": "tsx src/scripts/restore.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "pg": "^8.12.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "prisma": "^5.19.1",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4"
+  }
+}

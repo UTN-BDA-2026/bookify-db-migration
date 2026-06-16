@@ -1,172 +1,75 @@
-# Propuesta de Mejora de Base de Datos
+# Bookify DB Study
 
-Integrantes:
-Faustino Durán-Ignacio Patiño-Valentino Araya
+Repositorio dedicado al trabajo final de Base de Datos para Bookify. Compara una `MongoDB baseline` que replica la estructura conceptual actual del backend original con una `PostgreSQL optimizada` rediseñada con buenas practicas relacionales.
 
-**Sistema de Turnos (tipo Bookify)**
+## Objetivo
 
----
+- Generar un dataset sintetico, reproducible y equivalente para ambos motores.
+- Cargar el mismo dataset logico en MongoDB y PostgreSQL.
+- Ejecutar benchmarks comparables sobre operaciones de turnos.
+- Documentar resultados, decisiones tecnicas y evidencia para la defensa.
 
-## Propósito y Alcance
+## Estructura tecnica
 
-**Propósito**
+```text
+.
+├── docs/
+├── mongo-baseline/
+├── postgres-optimized/
+├── dataset-tools/
+├── docker-compose.yml
+├── package.json
+└── tsconfig.base.json
+```
 
-Proponer una mejora estructural del modelo de base de datos de un sistema de turnos, aplicando buenas prácticas de diseño y normalización, basadas en los conceptos aprendidos en la materia.
+### Raiz
 
-**Alcance**
+- `package.json`: orquestacion con npm workspaces.
+- `docker-compose.yml`: MongoDB, PostgreSQL y herramientas visuales.
+- `.env.example`: variables de entorno compartidas.
 
-- Análisis del modelo actual basado en MongoDB
-- Identificación de problemas estructurales
-- Rediseño conceptual en PostgreSQL
-- Aplicación de normalización hasta 3FN
-- Mejora en integridad, rendimiento y mantenibilidad
+### `mongo-baseline/`
 
-**Nota**
+- Replica el dominio actual de Bookify con sus relaciones duplicadas y limitaciones relevantes.
+- Incluye modelos, scripts de carga, benchmark y backup/restore.
 
-El objetivo es diseñar una **nueva estructura optimizada**, manteniendo consistencia conceptual con el sistema original.
+### `postgres-optimized/`
 
----
+- Contiene el esquema Prisma, SQL puntual para indices, transacciones y `EXPLAIN`, y benchmarks.
+- Separa acceso ORM de consultas/manual SQL para justificar decisiones tecnicas.
 
-## Estado Actual de la Base de Datos
+### `dataset-tools/`
 
-### Descripción General
+- Genera el dataset reproducible del dominio logico `companies/services/slots/appointments`.
+- Centraliza comparacion de metricas y formatos de salida del informe.
 
-El sistema actual utiliza MongoDB con un modelo orientado a documentos:
+## Flujo inicial
 
-- Esquemas flexibles
-- Uso de datos embebidos
-- Optimización para lecturas rápidas
+1. Copiar `.env.example` a `.env`.
+2. Levantar servicios con `npm run docker:up`.
+3. Instalar dependencias con `npm install`.
+4. Aplicar migraciones con `npm run postgres:deploy`.
+5. Generar cliente Prisma con `npm run postgres:generate`.
+6. Generar dataset con `npm run dataset:generate -- --scale=small`.
+7. Cargar datos con `npm run dataset:load:mongo` y `npm run dataset:load:postgres`.
 
-Este enfoque resulta adecuado en etapas iniciales, pero presenta limitaciones a medida que el sistema crece.
+## Comandos publicos
 
----
+```bash
+npm run setup
+npm run reset
+npm run dataset:generate -- --scale=medium
+npm run dataset:load:mongo
+npm run dataset:load:postgres
+npm run bench:mongo
+npm run bench:postgres
+npm run bench:compare
+npm run backup:mongo
+npm run restore:mongo
+npm run backup:postgres
+npm run restore:postgres
+```
 
-### Modelos Conceptuales
+## Estado actual
 
-- **Appointments (citas)**: contienen datos del usuario, servicio y empresa, frecuentemente embebidos
-- **Users (usuarios)**: información personal y de contacto
-- **Services (servicios)**: datos como nombre, duración y precio
-- **Companies (empresas)**: agrupan servicios y configuraciones
-- **Payments / Reminders**: estructuras mixtas entre embebidos y colecciones separadas
-
----
-
-### Problemas Estructurales
-
-### Falta de normalización
-
-- Información repetida en múltiples documentos
-- Ejemplo: datos del servicio dentro de cada cita
-
-### Redundancia de datos
-
-- Duplicación de atributos (precio, nombre, duración)
-- Mayor costo de almacenamiento y mantenimiento
-
-### Problemas de integridad
-
-- No existen restricciones formales
-- Posibilidad de inconsistencias y datos inválidos
-
-### Dificultad en consultas complejas
-
-- Consultas analíticas poco eficientes
-- Uso de pipelines complejos
-
-### Anomalías de actualización
-
-- Cambios en datos requieren múltiples modificaciones
-- Riesgo de inconsistencias
-
----
-
-## Propuesta de Mejora
-
-### Justificación del Modelo Relacional (PostgreSQL)
-
-- Mejora en la **integridad de los datos**
-- Soporte para **relaciones complejas**
-- Consultas más eficientes y claras
-- Aplicación de restricciones a nivel base de datos
-
----
-
-### Diseño Relacional Propuesto (3FN)
-
-Entidades principales:
-
-- **Users**
-- **Companies**
-- **Services**
-- **Appointments**
-- **Payments**
-- **Reminders**
-- **Subscriptions**
-- **Audit / History**
-
-Características:
-
-- Separación clara de responsabilidades
-- Uso de claves primarias (PK)
-- Uso de claves foráneas (FK)
-- Eliminación de redundancia
-
----
-
-### Normalización
-
-- **1FN**: eliminación de datos no atómicos
-- **2FN**: eliminación de dependencias parciales
-- **3FN**: eliminación de dependencias transitivas
-
-Resultado:
-
-- Datos consistentes
-- Menor redundancia
-- Mejor mantenibilidad
-
----
-
-### Integridad y Reglas
-
-- Claves foráneas entre entidades
-- Constraints (NOT NULL, UNIQUE, CHECK)
-- Estados controlados mediante enums
-- Uso de transacciones para operaciones críticas
-
----
-
-### Optimización
-
-- Índices en campos clave (usuario, empresa, fecha)
-- Índices compuestos para consultas frecuentes
-- Uso opcional de JSONB para datos flexibles
-
----
-
-## Consistencia con el Sistema Actual
-
-El rediseño mantiene coherencia conceptual con el sistema original:
-
-- Las mismas entidades principales (usuarios, citas, servicios)
-- Misma lógica de negocio
-- Reorganización estructural sin alterar el dominio
-
-El objetivo es **mejorar el modelo**, no cambiar el funcionamiento del sistema.
-
----
-
-## Buenas Prácticas Operativas
-
-- Estrategia de backups
-- Posibilidad de recuperación ante fallos
-- Organización para escalabilidad futura
-- Separación entre datos operativos y datos históricos
-
----
-
-## Escalabilidad y Mantenimiento
-
-- Posibilidad de particionado por fechas
-- Soporte para replicación
-- Uso de vistas materializadas para reporting
+El repo queda preparado para generar dataset, cargar ambas bases, correr benchmarks y producir reportes comparativos. Mongo conserva a proposito las duplicaciones del modelo original para servir como baseline experimental.

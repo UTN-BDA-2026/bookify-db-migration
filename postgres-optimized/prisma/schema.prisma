@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("POSTGRES_URL")
+  shadowDatabaseUrl = env("POSTGRES_SHADOW_URL")
+}
+
+model Company {
+  id           String        @id @db.VarChar(64)
+  companyCode  String        @unique @map("company_code") @db.VarChar(64)
+  name         String        @db.VarChar(160)
+  email        String        @unique @db.VarChar(160)
+  passwordHash String        @map("password_hash") @db.VarChar(255)
+  city         String        @db.VarChar(120)
+  street       String        @db.VarChar(160)
+  number       String        @db.VarChar(40)
+  phone        String        @db.VarChar(60)
+  role         String        @default("user") @db.VarChar(20)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  services     Service[]
+  appointments Appointment[]
+
+  @@map("companies")
+}
+
+model Service {
+  id               String        @id @db.VarChar(64)
+  companyId        String        @map("company_id") @db.VarChar(64)
+  title            String        @db.VarChar(160)
+  capacityPerShift Int           @map("capacity_per_shift")
+  description      String        @db.Text
+  duration         Int
+  price            Decimal       @db.Decimal(10, 2)
+  signPrice        Decimal       @map("sign_price") @db.Decimal(10, 2)
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+  company          Company       @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  slots            ServiceSlot[]
+  appointments     Appointment[]
+
+  @@index([companyId])
+  @@map("services")
+}
+
+model ServiceSlot {
+  id           String        @id @db.VarChar(64)
+  serviceId    String        @map("service_id") @db.VarChar(64)
+  companyId    String        @map("company_id") @db.VarChar(64)
+  startsAt     DateTime      @map("starts_at")
+  capacity     Int
+  reserved     Int           @default(0)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  service      Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+
+  @@unique([serviceId, startsAt])
+  @@index([companyId, startsAt])
+  @@index([serviceId, startsAt])
+  @@map("service_slots")
+}
+
+model Appointment {
+  id                      String      @id @db.VarChar(64)
+  companyId               String      @map("company_id") @db.VarChar(64)
+  serviceId               String      @map("service_id") @db.VarChar(64)
+  slotId                  String      @map("slot_id") @db.VarChar(64)
+  name                    String      @db.VarChar(120)
+  lastName                String      @map("last_name") @db.VarChar(120)
+  email                   String      @db.VarChar(160)
+  dni                     String      @db.VarChar(40)
+  phone                   String      @db.VarChar(60)
+  date                    DateTime
+  paymentId               String?     @map("payment_id") @db.VarChar(120)
+  status                  String      @default("scheduled") @db.VarChar(20)
+  serviceTitleSnapshot    String      @map("service_title_snapshot") @db.VarChar(160)
+  serviceDurationSnapshot Int         @map("service_duration_snapshot")
+  servicePriceSnapshot    Decimal     @map("service_price_snapshot") @db.Decimal(10, 2)
+  createdAt               DateTime    @default(now()) @map("created_at")
+  updatedAt               DateTime    @updatedAt @map("updated_at")
+  company                 Company     @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  service                 Service     @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  slot                    ServiceSlot @relation(fields: [slotId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, date])
+  @@index([serviceId, date])
+  @@map("appointments")
+}
+
