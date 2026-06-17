@@ -45,9 +45,9 @@ Repositorio dedicado al trabajo final de Base de Datos para Bookify. Compara una
 
 ## Flujo inicial
 
-1. Agregar variables de entorno a `.env`.
-2. Levantar servicios con `npm run docker:up`.
-3. Instalar dependencias con `npm install`.
+1. Copiar `.env.example` a `.env` y completar variables de entorno.
+2. Instalar dependencias con `npm install`.
+3. Levantar servicios con `npm run docker:up`.
 4. Aplicar migraciones con `npm run postgres:deploy`.
 5. Generar cliente Prisma con `npm run postgres:generate`.
 6. Generar dataset con `npm run dataset:generate -- --scale=small`.
