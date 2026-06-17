@@ -26,7 +26,7 @@ Repositorio dedicado al trabajo final de Base de Datos para Bookify. Compara una
 
 - `package.json`: orquestacion con npm workspaces.
 - `docker-compose.yml`: MongoDB, PostgreSQL y herramientas visuales.
-- `.env.example`: variables de entorno compartidas.
+- `.env.example`: variables de entorno.
 
 ### `mongo-baseline/`
 
@@ -45,7 +45,7 @@ Repositorio dedicado al trabajo final de Base de Datos para Bookify. Compara una
 
 ## Flujo inicial
 
-1. Copiar `.env.example` a `.env`.
+1. Agregar variables de entorno a `.env`.
 2. Levantar servicios con `npm run docker:up`.
 3. Instalar dependencias con `npm install`.
 4. Aplicar migraciones con `npm run postgres:deploy`.
