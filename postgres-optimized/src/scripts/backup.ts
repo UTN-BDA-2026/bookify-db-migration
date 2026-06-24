@@ -1,3 +1,4 @@
+import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { env } from "../config.js";
@@ -8,6 +9,8 @@ const outputPath = path.resolve(currentDir, "../../backups/postgres-backup.dump"
 const containerBackupPath = "/tmp/bookify-postgres-backup.dump";
 
 async function main(): Promise<void> {
+  await mkdir(path.dirname(outputPath), { recursive: true });
+
   await runCommand("docker", [
     "exec",
     "-e",

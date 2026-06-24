@@ -8,7 +8,6 @@ process.loadEnvFile?.(
 
 const envSchema = z.object({
   MONGO_URL: z.string().min(1),
-  DATASET_SCALE: z.enum(["small", "medium", "large"]).default("medium"),
   DATASET_SEED: z.string().default("42")
 });
 

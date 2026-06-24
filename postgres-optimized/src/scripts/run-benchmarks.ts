@@ -1,19 +1,16 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { readDataset } from "../services/dataset-file.js";
 import { prisma } from "../services/prisma.js";
 import { cancelAppointmentPostgres, reserveAppointmentPostgres } from "../services/operations.js";
 import { measureOperation, summarizeOperation, buildReport } from "../utils/benchmark.js";
 import { writeJsonFile } from "../../../dataset-tools/src/utils/files.js";
-import { scaleConfig } from "../../../dataset-tools/src/shared/scales.js";
+import { datasetConfig } from "../../../dataset-tools/src/shared/dataset-config.js";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const reportsDir = path.resolve(currentDir, "../../../dataset-tools/output/reports");
 
 async function main(): Promise<void> {
-  const dataset = await readDataset();
-  const scale = dataset.meta.scale;
-  const iterations = scaleConfig[scale].benchmarkIterations;
+  const iterations = datasetConfig.benchmarkIterations;
   const sampleCompany = await prisma.company.findFirst();
   const sampleService = await prisma.service.findFirst();
   const sampleSlots = await prisma.$queryRaw<Array<{ id: string; service_id: string; company_id: string }>>`
@@ -99,14 +96,13 @@ async function main(): Promise<void> {
   });
 
   const report = buildReport({
-    scale,
     operations: [
-      summarizeOperation("bulk_insert", "postgres", scale, bulkInsert.durations, bulkInsert.errors),
-      summarizeOperation("appointments_by_company_range", "postgres", scale, companyRange.durations, companyRange.errors),
-      summarizeOperation("availability_by_service", "postgres", scale, availability.durations, availability.errors),
-      summarizeOperation("create_reservation", "postgres", scale, reserve.durations, reserve.errors),
-      summarizeOperation("cancel_reservation", "postgres", scale, cancel.durations, cancel.errors),
-      summarizeOperation("company_history", "postgres", scale, history.durations, history.errors, {
+      summarizeOperation("bulk_insert", "postgres", bulkInsert.durations, bulkInsert.errors),
+      summarizeOperation("appointments_by_company_range", "postgres", companyRange.durations, companyRange.errors),
+      summarizeOperation("availability_by_service", "postgres", availability.durations, availability.errors),
+      summarizeOperation("create_reservation", "postgres", reserve.durations, reserve.errors),
+      summarizeOperation("cancel_reservation", "postgres", cancel.durations, cancel.errors),
+      summarizeOperation("company_history", "postgres", history.durations, history.errors, {
         sampleAppointmentId: sampleAppointment.id
       })
     ]

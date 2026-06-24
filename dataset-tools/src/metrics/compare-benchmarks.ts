@@ -14,16 +14,13 @@ async function readReport(fileName: string): Promise<BenchmarkReport> {
 }
 
 function toCsv(reports: BenchmarkReport[]): string {
-  const lines = [
-    "engine,scale,operation,iterations,total_ms,average_ms,p95_ms,errors"
-  ];
+  const lines = ["engine,operation,iterations,total_ms,average_ms,p95_ms,errors"];
 
   for (const report of reports) {
     for (const operation of report.operations) {
       lines.push(
         [
           report.engine,
-          report.scale,
           operation.operation,
           operation.iterations,
           operation.totalMs.toFixed(3),
@@ -42,14 +39,14 @@ function toMarkdown(reports: BenchmarkReport[]): string {
   const header = [
     "# Benchmark Comparison",
     "",
-    "| Engine | Scale | Operation | Iterations | Total ms | Avg ms | P95 ms | Errors |",
-    "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |"
+    "| Engine | Operation | Iterations | Total ms | Avg ms | P95 ms | Errors |",
+    "| --- | --- | ---: | ---: | ---: | ---: | ---: |"
   ];
 
   const rows = reports.flatMap((report) =>
     report.operations.map(
       (operation) =>
-        `| ${report.engine} | ${report.scale} | ${operation.operation} | ${operation.iterations} | ${operation.totalMs.toFixed(2)} | ${operation.averageMs.toFixed(2)} | ${operation.p95Ms.toFixed(2)} | ${operation.errors} |`
+        `| ${report.engine} | ${operation.operation} | ${operation.iterations} | ${operation.totalMs.toFixed(2)} | ${operation.averageMs.toFixed(2)} | ${operation.p95Ms.toFixed(2)} | ${operation.errors} |`
     )
   );
 
@@ -84,4 +81,3 @@ main().catch((error) => {
   console.error("Benchmark comparison failed", error);
   process.exitCode = 1;
 });
-

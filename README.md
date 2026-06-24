@@ -46,19 +46,23 @@ Repositorio dedicado al trabajo final de Base de Datos para Bookify. Compara una
 ## Flujo inicial
 
 1. Copiar `.env.example` a `.env` y completar variables de entorno.
-2. Instalar dependencias con `npm install`.
-3. Levantar servicios con `npm run docker:up`.
-4. Aplicar migraciones con `npm run postgres:deploy`.
-5. Generar cliente Prisma con `npm run postgres:generate`.
-6. Generar dataset con `npm run dataset:generate -- --scale=small`.
-7. Cargar datos con `npm run dataset:load:mongo` y `npm run dataset:load:postgres`.
+2. Ejecutar `npm run setup` para instalar dependencias, levantar Docker, aplicar migraciones, generar el dataset y cargarlo en ambas bases.
+
+Alternativa paso a paso:
+
+1. `npm install`
+2. `npm run docker:up`
+3. `npm run postgres:deploy`
+4. `npm run postgres:generate`
+5. `npm run dataset:generate`
+6. `npm run dataset:load:mongo` y `npm run dataset:load:postgres`
 
 ## Comandos publicos
 
 ```bash
 npm run setup
 npm run reset
-npm run dataset:generate -- --scale=medium
+npm run dataset:generate
 npm run dataset:load:mongo
 npm run dataset:load:postgres
 npm run bench:mongo

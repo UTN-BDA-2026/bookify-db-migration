@@ -17,7 +17,7 @@ const serviceSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   availableAppointments: [availableAppointmentSchema],
-  scheduledAppointments: [{ type: Date, default: [] }],
+  scheduledAppointments: { type: [Date], default: [] },
   signPrice: { type: Number, default: 0 }
 });
 

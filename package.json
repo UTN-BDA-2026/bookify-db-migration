@@ -9,11 +9,12 @@
     "dataset-tools"
   ],
   "scripts": {
-    "setup": "npm install && npm run docker:up && npm run postgres:deploy && npm run postgres:generate",
+    "setup": "npm install && npm run docker:up && npm run postgres:deploy && npm run postgres:generate && npm run dataset:generate && npm run dataset:load:mongo && npm run dataset:load:postgres",
     "reset": "npm run docker:down && npm run docker:up && npm run postgres:deploy",
+    "reset:hard": "docker compose down -v && npm run docker:up && npm run postgres:deploy",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "dataset:generate": "npm run dataset:generate --workspace dataset-tools --",
+    "dataset:generate": "npm run dataset:generate --workspace dataset-tools",
     "dataset:load:mongo": "npm run dataset:load --workspace mongo-baseline",
     "dataset:load:postgres": "npm run dataset:load --workspace postgres-optimized",
     "bench:mongo": "npm run bench --workspace mongo-baseline",

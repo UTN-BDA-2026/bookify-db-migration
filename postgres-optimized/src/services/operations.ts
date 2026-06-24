@@ -12,8 +12,8 @@ export async function reserveAppointmentPostgres(
 ): Promise<string> {
   return client.$transaction(async (tx: Prisma.TransactionClient) => {
     const slotRows = await tx.$queryRaw<
-      Array<{ id: string; capacity: number; reserved: number }>
-    >`SELECT id, capacity, reserved FROM service_slots WHERE id = ${input.slotId} FOR UPDATE`;
+      Array<{ id: string; capacity: number; reserved: number; starts_at: Date }>
+    >`SELECT id, capacity, reserved, starts_at FROM service_slots WHERE id = ${input.slotId} FOR UPDATE`;
 
     const slot = slotRows[0];
     if (!slot) {
@@ -51,7 +51,7 @@ export async function reserveAppointmentPostgres(
         email: `bench${input.customerIndex}@example.com`,
         dni: `${40000000 + input.customerIndex}`,
         phone: `549261${String(input.customerIndex).padStart(7, "0")}`,
-        date: new Date(),
+        date: slot.starts_at,
         paymentId: null,
         status: "scheduled",
         serviceTitleSnapshot: service.title,

@@ -1,15 +1,13 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { env } from "../config/env.js";
+import { datasetConfig } from "../../../dataset-tools/src/shared/dataset-config.js";
 import { AppointmentModel } from "../models/appointment.js";
 import { CompanyModel } from "../models/company.js";
 import { ServiceModel } from "../models/service.js";
-import { readDataset } from "../services/dataset-file.js";
 import { connectMongo, disconnectMongo } from "../services/mongo.js";
 import { cancelAppointmentMongo, reserveAppointmentMongo } from "../services/operations.js";
 import { measureOperation, summarizeOperation, buildReport } from "../utils/benchmark.js";
 import { writeJsonFile } from "../../../dataset-tools/src/utils/files.js";
-import { scaleConfig } from "../../../dataset-tools/src/shared/scales.js";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const reportsDir = path.resolve(currentDir, "../../../dataset-tools/output/reports");
@@ -17,9 +15,7 @@ const reportsDir = path.resolve(currentDir, "../../../dataset-tools/output/repor
 async function main(): Promise<void> {
   await connectMongo();
 
-  const dataset = await readDataset();
-  const scale = dataset.meta.scale;
-  const iterations = scaleConfig[scale].benchmarkIterations;
+  const iterations = datasetConfig.benchmarkIterations;
   const sampleCompany = await CompanyModel.findOne().lean();
   const sampleService = await ServiceModel.findOne().lean();
   const sampleAvailableServices = await ServiceModel.find({
@@ -103,14 +99,13 @@ async function main(): Promise<void> {
   });
 
   const report = buildReport({
-    scale,
     operations: [
-      summarizeOperation("bulk_insert", "mongo", scale, bulkInsert.durations, bulkInsert.errors),
-      summarizeOperation("appointments_by_company_range", "mongo", scale, companyRange.durations, companyRange.errors),
-      summarizeOperation("availability_by_service", "mongo", scale, availability.durations, availability.errors),
-      summarizeOperation("create_reservation", "mongo", scale, reserve.durations, reserve.errors),
-      summarizeOperation("cancel_reservation", "mongo", scale, cancel.durations, cancel.errors),
-      summarizeOperation("company_history", "mongo", scale, history.durations, history.errors, {
+      summarizeOperation("bulk_insert", "mongo", bulkInsert.durations, bulkInsert.errors),
+      summarizeOperation("appointments_by_company_range", "mongo", companyRange.durations, companyRange.errors),
+      summarizeOperation("availability_by_service", "mongo", availability.durations, availability.errors),
+      summarizeOperation("create_reservation", "mongo", reserve.durations, reserve.errors),
+      summarizeOperation("cancel_reservation", "mongo", cancel.durations, cancel.errors),
+      summarizeOperation("company_history", "mongo", history.durations, history.errors, {
         sampleAppointmentKey: sampleScheduledAppointment.appointmentKey
       })
     ]

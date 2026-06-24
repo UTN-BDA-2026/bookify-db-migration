@@ -1,5 +1,3 @@
-export type DatasetScale = "small" | "medium" | "large";
-
 export interface CompanySeed {
   id: string;
   companyCode: string;
@@ -68,7 +66,6 @@ export interface DatasetSummary {
 export interface BookifyDataset {
   meta: {
     seed: number;
-    scale: DatasetScale;
     generatedAt: string;
     summary: DatasetSummary;
   };
@@ -77,4 +74,3 @@ export interface BookifyDataset {
   slots: SlotSeed[];
   appointments: AppointmentSeed[];
 }
-

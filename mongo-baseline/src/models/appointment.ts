@@ -20,7 +20,7 @@ const appointmentSchema = new Schema({
     default: "scheduled"
   },
   createdAt: { type: Date, default: Date.now },
-  updateAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now }
 });
 
 appointmentSchema.index({ companyId: 1, date: 1 });

@@ -1,7 +1,6 @@
 export interface BenchmarkOperationResult {
   operation: string;
   engine: "mongo" | "postgres";
-  scale: string;
   iterations: number;
   totalMs: number;
   averageMs: number;
@@ -12,7 +11,6 @@ export interface BenchmarkOperationResult {
 
 export interface BenchmarkReport {
   engine: "mongo" | "postgres";
-  scale: string;
   generatedAt: string;
   operations: BenchmarkOperationResult[];
 }
@@ -27,7 +25,6 @@ export function percentile(values: number[], target: number): number {
 export function summarizeOperation(
   operation: string,
   engine: "mongo" | "postgres",
-  scale: string,
   durations: number[],
   errors = 0,
   metadata?: Record<string, number | string>
@@ -36,7 +33,6 @@ export function summarizeOperation(
   return {
     operation,
     engine,
-    scale,
     iterations: durations.length,
     totalMs,
     averageMs: durations.length > 0 ? totalMs / durations.length : 0,
@@ -45,4 +41,3 @@ export function summarizeOperation(
     metadata
   };
 }
-

@@ -24,17 +24,12 @@ export async function measureOperation(
   return { durations, errors };
 }
 
-export function buildReport(params: {
-  scale: string;
-  operations: BenchmarkOperationResult[];
-}): BenchmarkReport {
+export function buildReport(params: { operations: BenchmarkOperationResult[] }): BenchmarkReport {
   return {
     engine: "mongo",
-    scale: params.scale,
     generatedAt: new Date().toISOString(),
     operations: params.operations
   };
 }
 
 export { summarizeOperation };
-
